@@ -29,8 +29,8 @@ To get started with the blog web app, follow these steps:
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/RuberDucky/zain-blog.git
-   cd zain-blog
+   git clone https://github.com/RuberDucky/zainBlog.git
+   cd zainBlog
    ```
 
 2. **Install dependencies**:
