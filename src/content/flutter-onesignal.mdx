@@ -1,0 +1,128 @@
+---
+
+title: 'Integrating OneSignal Notifications in Flutter'
+publishedAt: '2024-09-19'
+summary: 'Learn how to integrate OneSignal push notifications into your Flutter app for Android and iOS platforms.'
+slug: 'onesignal-notifications-flutter'
+featured: 'true'
+---
+
+# Integrating OneSignal Notifications in Flutter
+
+Push notifications play a vital role in keeping users engaged with apps. OneSignal, one of the most popular push notification services, is easy to integrate with Flutter. In this blog, we’ll walk through the steps to integrate OneSignal notifications into your Flutter app for both Android and iOS.
+
+---
+
+### Step 1: Create a Firebase Project for OneSignal Push Notifications
+
+Before integrating OneSignal with your Flutter app, we first need to create a Firebase project because we’ll require the Firebase server key to send notifications. Follow these steps to set it up.
+
+1. **Go to Firebase Console:**  
+   Head over to [Firebase Console](https://console.firebase.google.com) and create a new project. Give it a suitable name.
+
+2. **Navigate to Project Settings:**
+   Once the project is created, you’ll be redirected to the Firebase dashboard. On the top left corner, click on **Project Settings**.
+
+3. **Generate a New Key Pair:**
+   In **Project Settings**, navigate to the **Services Accounts** tab (under Project Settings). Here, you’ll find an option to **Generate a New Key Pair**. 
+
+4. **Download the JSON File:**
+   When you generate a new key pair, Firebase will allow you to download a `.json` file. Save this file — it contains the server key that we need to upload to the OneSignal dashboard.
+
+### Step 2: Create a OneSignal Account for Push Notifications
+
+1. **New App/Website:**  
+   Head over to [OneSignal dashboard](https://dashboard.onesignal.com/apps?page=1) and create a new project for an App or Website. Give it a suitable name.
+
+    ![OneSignal Project Creation](/firstStep.png)
+
+2. **Upload json File:**  
+   Now, we need to upload here the json file that we export from the firebase. 
+
+    ![OneSignal Project Creation](/secondStep.png)
+
+3. **Select Framework:**  
+   If you are on flutter you can Select the Flutter or react native you can just for create the app. 
+    ![OneSignal Project Creation](/3rdStep.png)
+
+4. **App ID:**  
+   There you go, you successfully created the OneSignal app and now you need that App ID, copy this and save it we will need later. 
+    
+    ![OneSignal Project Creation](/4thStep.png)
+
+5. **User Auth Key:**  
+   Your User Auth Key is for app management API requests (e.g. using the Creating an app and Viewing apps) and is unique to each user.
+    
+    ![OneSignal Project Creation](/5thStep.png)
+
+6. **Generate New User Auth Key:**  
+   You need to generate your user Auth Key each time to access it. If you reset your user Auth Key, you will receive an email letting you know this occurred
+    
+    ![OneSignal Project Creation](/three.png)
+
+### Step 3: Lets Code
+
+1. **Add OneSignal Dependency**
+   Add the following dependency to your `pubspec.yaml` file:
+   ```yaml
+   dependencies:
+      onesignal_flutter: ^5.1.6
+   ```
+2. **Add Code Snippet in main.dart**
+   Add the following Code Snippet to your `main.dart` file:
+   ```dart
+      void main() async {
+      WidgetsFlutterBinding.ensureInitialized();
+      OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+      OneSignal.initialize(appId);
+      String? token;
+      var ID4 = OneSignal.User.pushSubscription.id;
+      print("ID4 $ID4");
+      token = OneSignal.User.pushSubscription.id;
+      print("token: $token");
+      OneSignal.Notifications.requestPermission(true);
+      runApp(MyApp());
+      }
+   ```
+3. **Lets create an API Function of OneSignal**
+   Add the following Code Snippet to your MyApp StatefulWidget:
+   ```dart
+     oneSignalFun() async {
+      var url = Uri.parse('https://onesignal.com/api/v1/notifications');
+      var response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Basic YOUR_AUTH_KEY',
+      },
+      body: jsonEncode({
+        'app_id': appID,
+        'contents': {'en': 'English Message'},
+        'headings': {'en': 'English Title'},
+        'include_player_ids': [
+          'YOUR_PLAYER_ID'
+        ], // Add the other user's OneSignal ID here
+         }),
+      );
+      if (response.statusCode == 200) {
+      print("Notification sent successfully");
+      print("Notification Body: ${response.body}");
+      } else {
+      print("Failed to send notification: ${response.body}");
+      }
+   }
+   ```
+4. **Lets create an OnTap**
+   Add the following Code Snippet to your button's OnTap:
+   ```dart
+      var ID4 = OneSignal.User.pushSubscription.id;
+      print("Push Subscription ID: $ID4");
+      // Send Notification
+      final response = await sendNotification(
+      [ID4!],
+      "You got notification From Deliver Partner",
+      "Deliver Partner"
+      );
+   ```
+### Step 3: Here we go
+   ![OneSignal Project Creation](/notification.jpeg)
