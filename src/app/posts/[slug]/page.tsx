@@ -7,7 +7,8 @@ import { reformatDate } from '@/lib/utils';
 import { ArrowLeft } from 'lucide-react';
 
 export default async function Blog({ params }: { params: any }) {
-  const post = getPosts().find((post) => post.slug === params.slug);
+  const post = (await getPosts()).find((post) => post.slug === params.slug);
+
 
   if (!post) {
     notFound();
